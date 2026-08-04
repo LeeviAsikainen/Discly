@@ -18,6 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.ui.text.font.FontWeight
 
 
 @Composable
@@ -307,13 +309,24 @@ fun CourseSelectScreen(
                             shape = RoundedCornerShape(12.dp)
                         ) {
 
-                            Text(
-                                text = "➕ Add \"$searchQuery\"",
+                            Row(
+                                modifier = Modifier.padding(16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
 
-                                color = colors.accent,
+                                Icon(
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = null,
+                                    tint = colors.accent
+                                )
 
-                                modifier = Modifier.padding(16.dp)
-                            )
+                                Spacer(modifier = Modifier.width(8.dp))
+
+                                Text(
+                                    text = "Add \"${searchQuery.ifBlank { "Unnamed course" }}\"",
+                                    color = colors.accent
+                                )
+                            }
                         }
                     }
                 }

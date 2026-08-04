@@ -12,4 +12,6 @@ sealed class AppScreen {
     data object Settings : AppScreen()
 
     data object Games : AppScreen()
+
+    data object GameResult : AppScreen()
 }

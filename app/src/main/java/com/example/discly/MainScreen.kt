@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.activity.compose.BackHandler
 
+
 @Composable
 fun MainScreen(
     themeMode: ThemeMode,
@@ -11,9 +12,15 @@ fun MainScreen(
     colors: AppColors,
 
 ) {
+
+    var selectedResult by remember {
+        mutableStateOf<GameResult?>(null)
+    }
+
     var newCourseName by remember {
         mutableStateOf("")
     }
+
 
     var currentScreen by remember {
         mutableStateOf<AppScreen>(AppScreen.CourseSelect)
@@ -36,7 +43,7 @@ fun MainScreen(
     }
 
     var savedCourses by remember {
-        mutableStateOf(CoursesDB)
+        mutableStateOf<List<Course>>(emptyList())
     }
 
 
@@ -49,11 +56,16 @@ fun MainScreen(
 
     LaunchedEffect(Unit) {
 
-        val customCourses =
-            AppStorage.loadCourses(context)
+
+        AppStorage.initializeCourses(
+            context,
+            CoursesDB
+        )
+
 
         savedCourses =
-            CoursesDB + customCourses
+            AppStorage.loadCourses(context)
+
 
         unfinishedGame =
             AppStorage.loadCurrentGame(context)
@@ -78,6 +90,12 @@ fun MainScreen(
     BackHandler {
 
         when (currentScreen) {
+
+            AppScreen.GameResult -> {
+
+                currentScreen = AppScreen.Games
+
+            }
 
             AppScreen.CourseSelect -> {
                 // Päävalikossa ei tehdä mitään
@@ -183,14 +201,16 @@ fun MainScreen(
                     AppStorage.deleteCurrentGame(context)
                     unfinishedGame = null
                 },
-                onDeleteCourse = {
+                onDeleteCourse = { course ->
 
                     AppStorage.deleteCourse(
                         context,
-                        it
+                        course
                     )
 
-                    refreshCourses()
+
+                    savedCourses =
+                        AppStorage.loadCourses(context)
                 }
             )
         }
@@ -198,59 +218,97 @@ fun MainScreen(
         AppScreen.Start -> {
 
             StartScreen(
-                initialCourseName = newCourseName
-            ) { p, h, c, save ->
+
+                initialCourseName = newCourseName,
+
+                colors = colors,
 
 
-                players = p
-                totalHoles = h
-                courseName = c
+                onSaveCourse = { course ->
 
 
-                if(save){
-
-                    val oldCourses =
+                    val old =
                         AppStorage.loadCourses(context)
 
 
-                    val exists =
-                        oldCourses.any {
-                            it.name.equals(
-                                c,
-                                ignoreCase = true
-                            )
-                        }
+                    if(old.any {
+                            it.name.equals(course.name, ignoreCase = true)
+                        }) {
+
+                        false
+
+                    } else {
 
 
-                    if(exists){
-
-                        return@StartScreen false
-                    }
-
-
-                    val newCourse =
-                        Course(
-                            name = c,
-                            pars = List(h){3},
-                            custom = true
+                        AppStorage.saveCourses(
+                            context,
+                            old + course
                         )
 
 
-                    AppStorage.saveCourses(
-                        context,
-                        oldCourses + newCourse
+                        savedCourses =
+                            CoursesDB + old + course
+
+
+                        true
+                    }
+
+                },
+
+                onStartGame = { course ->
+
+
+                    selectedCourse = course
+
+                    courseName = course.name
+
+                    totalHoles = course.holeCount
+
+
+                    players = listOf("Player 1")
+
+
+                    val newGame = SavedGame(
+
+                        courseName = course.name,
+
+                        players = players,
+
+                        scores = players.map {
+
+                            List(course.holeCount) { 0 }
+
+                        },
+
+                        pars = course.pars,
+
+                        totalHoles = course.holeCount,
+
+                        currentHole = 0
                     )
 
 
-                    savedCourses =
-                        CoursesDB + oldCourses + newCourse
+                    AppStorage.saveCurrentGame(
+                        context,
+                        newGame
+                    )
+
+
+                    unfinishedGame = newGame
+
+
+                    currentScreen = AppScreen.Game
+                },
+
+
+                onBack = {
+
+                    currentScreen =
+                        AppScreen.CourseSelect
+
                 }
 
-
-                currentScreen = AppScreen.Game
-
-                true
-            }
+            )
         }
 
         AppScreen.Game -> {
@@ -311,8 +369,33 @@ fun MainScreen(
         AppScreen.Games -> {
             GamesScreen(
                 colors = colors,
-                onBack = { currentScreen = AppScreen.CourseSelect }
+                onBack = { currentScreen = AppScreen.CourseSelect },
+                onOpenGame = { game ->
+                    selectedResult = game
+                    currentScreen = AppScreen.GameResult
+                }
             )
+        }
+        AppScreen.GameResult -> {
+
+            selectedResult?.let { game ->
+
+                SummaryScreen(
+                    players = listOf("Player 1"),
+                    scoreTable = game.scores,
+                    pars = game.pars,
+                    colors = colors,
+                    courseName = game.courseName,
+
+                    onBack = {
+                        currentScreen = AppScreen.Games
+                    },
+
+                    onMenu = {
+                        currentScreen = AppScreen.CourseSelect
+                    }
+                )
+            }
         }
 
     }

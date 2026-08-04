@@ -20,7 +20,8 @@ import androidx.compose.foundation.combinedClickable
 @Composable
 fun GamesScreen(
     colors: AppColors,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onOpenGame: (GameResult) -> Unit
 ) {
 
     val context = LocalContext.current
@@ -113,7 +114,7 @@ fun GamesScreen(
                             .fillMaxWidth()
                             .combinedClickable(
                                 onClick = {
-                                    // (voit myöhemmin lisätä: open game details)
+                                    onOpenGame(game)
                                 },
                                 onLongClick = {
                                     selectedGame = game

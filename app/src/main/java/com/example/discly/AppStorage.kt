@@ -402,6 +402,21 @@ object AppStorage {
         "courses.json"
 
 
+    fun initializeCourses(
+        context: Context,
+        defaultCourses: List<Course>
+    ) {
+
+        val savedCourses = loadCourses(context)
+
+        if (savedCourses.isEmpty()) {
+
+            saveCourses(
+                context,
+                defaultCourses
+            )
+        }
+    }
 
     fun saveCourses(
         context: Context,

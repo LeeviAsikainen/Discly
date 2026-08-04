@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -71,27 +72,32 @@ fun SummaryScreen(
                 .padding(16.dp)
         ) {
 
+
             // HEADER
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
+                IconButton(
+                    onClick = onBack
+                ) {
+
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back",
+                        tint = colors.accent
+                    )
+                }
+
+
                 Text(
                     text = "Round Result",
-                    color = colors.text,
-                    fontSize = 34.sp,
-                    fontWeight = FontWeight.Bold
-                )
-
-                Icon(
-                    imageVector = Icons.Default.BarChart,
-                    contentDescription = null,
-                    tint = colors.accent,
-                    modifier = Modifier.size(28.dp)
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = colors.text
                 )
             }
+
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -123,16 +129,16 @@ fun SummaryScreen(
                     Column {
 
                         Text(
-                            text = players[0],
+                            text = courseName,
                             color = colors.text,
                             fontSize = 30.sp,
-                            fontWeight = FontWeight.Bold
+                            //fontWeight = FontWeight.Bold
                         )
 
                         Spacer(modifier = Modifier.height(4.dp))
 
                         Text(
-                            text = "${scores.size} Holes • $courseName",
+                            text = "${scores.size} Holes",
                             color = colors.subText,
                             fontSize = 16.sp
                         )
@@ -155,7 +161,7 @@ fun SummaryScreen(
                                 else -> colors.text
                             },
 
-                            fontSize = 54.sp,
+                            fontSize = 42.sp,
                             fontWeight = FontWeight.Bold
                         )
 
@@ -260,14 +266,14 @@ fun SummaryScreen(
 
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(62.dp)
+                    .height(58.dp)
             ) {
 
                 Text(
                     text = "Back to menu",
                     color = Color.White,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.SemiBold
+                    fontSize = 16.sp,
+                //    fontWeight = FontWeight.SemiBold
                 )
             }
         }
