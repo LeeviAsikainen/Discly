@@ -32,6 +32,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 
 
 @Composable
@@ -44,8 +45,10 @@ fun GameScreen(
     startHole: Int = 0,
     colors: AppColors,
     onGameFinished: () -> Unit,
-    onExitToMenu: () -> Unit
+    onExitToMenu: () -> Unit,
+    startTime: Long = System.currentTimeMillis(),
 ) {
+
 
     var showExitDialog by remember {
         mutableStateOf(false)
@@ -67,6 +70,7 @@ fun GameScreen(
     val haptic = LocalHapticFeedback.current
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+
 
     val scores = listOf(5, 4, 3, 2, 1, 0) // -1 = "Muu"
 
@@ -120,6 +124,40 @@ fun GameScreen(
         totalDiff > 0 -> Color(0xFFFF5252)
         totalDiff < 0 -> Color(0xFF4CAF50)
         else -> colors.text
+    }
+
+    val courseHistory = remember {
+        AppStorage.loadResults(context)
+    }
+
+    val holeStats = remember(
+        courseHistory,
+        currentHoleIndex,
+        courseName
+    ) {
+
+        val scores = courseHistory
+            .filter { it.courseName == courseName }
+            .mapNotNull { game ->
+                game.scores
+                    .flatMap { it }
+                    .getOrNull(currentHoleIndex)
+                    ?.takeIf { it > 0 }
+            }
+
+        if (scores.isEmpty()) {
+            Pair("-", "-")
+        } else {
+
+            val best = scores.minOrNull()
+
+            val average = scores.average()
+
+            Pair(
+                best.toString(),
+                String.format("%.1f", average)
+            )
+        }
     }
 
 
@@ -226,6 +264,10 @@ fun GameScreen(
                                     if (currentHoleIndex == totalHoles - 1) {
 
 
+                                        val duration =
+                                            (System.currentTimeMillis() - startTime) / 1000
+
+
                                         AppStorage.saveGameResult(
                                             context,
 
@@ -235,7 +277,8 @@ fun GameScreen(
                                                 scores = scoreTable.map {
                                                     it.toList()
                                                 },
-                                                pars = pars
+                                                pars = pars,
+                                                durationSec = duration
                                             )
                                         )
 
@@ -258,7 +301,8 @@ fun GameScreen(
                                                 },
                                                 pars = pars,
                                                 totalHoles = totalHoles,
-                                                currentHole = currentHoleIndex
+                                                currentHole = currentHoleIndex,
+                                                startTime = startTime
                                             )
                                         )
                                     }
@@ -355,6 +399,70 @@ fun GameScreen(
                     color = totalColor,
                     fontSize = 34.sp
                 )
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 180.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Column(
+                    modifier = Modifier.width(90.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                    Text(
+                        text = "BEST",
+                        color = colors.text.copy(alpha = 0.4f),
+                        fontSize = 10.sp
+                    )
+
+                    Text(
+                        text = holeStats.first,
+                        color = colors.text.copy(alpha = 0.4f),
+                        fontSize = 24.sp,
+                        //fontWeight = FontWeight.Bold
+                    )
+                }
+
+
+                Box(
+                    modifier = Modifier
+                        .height(40.dp)
+                        .width(1.dp)
+                        .background(
+                            colors.subText.copy(alpha = 0.4f)
+                        )
+                )
+
+
+                Column(
+                    modifier = Modifier.width(90.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                    Text(
+                        text = "AVERAGE",
+                        color = colors.text.copy(alpha = 0.4f),
+                        fontSize = 10.sp
+                    )
+
+                    Text(
+                        text = holeStats.second,
+                        color = colors.text.copy(alpha = 0.4f),
+                        fontSize = 24.sp,
+                        //fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
 
@@ -654,7 +762,8 @@ fun GameScreen(
                                 },
                                 pars = pars,
                                 totalHoles = totalHoles,
-                                currentHole = currentHoleIndex
+                                currentHole = currentHoleIndex,
+                                startTime = startTime
                             )
                         )
 

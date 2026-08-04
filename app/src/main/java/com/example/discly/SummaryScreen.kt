@@ -1,6 +1,7 @@
 package com.example.discly
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -113,6 +114,32 @@ fun SummaryScreen(
 
                 val scores = scoreTable[0]
 
+                // Lasketaan diffit (vain pelatut väylät)
+                val diffs = scores.indices
+                    .filter { scores[it] > 0 }
+                    .map { scores[it] - pars[it] }
+
+                val diffsWithIndex = scores.indices
+                    .filter { scores[it] > 0 }
+                    .map { index ->
+                        index to (scores[index] - pars[index])
+                    }
+
+                val bestEntry = diffsWithIndex.minByOrNull { it.second }
+                val worstEntry = diffsWithIndex.maxByOrNull { it.second }
+
+                val best = bestEntry?.second
+                val bestHole = bestEntry?.first
+
+                val worst = worstEntry?.second
+                val worstHole = worstEntry?.first
+
+                val average: Double? =
+                    if (diffsWithIndex.isNotEmpty())
+                        diffsWithIndex.map { it.second }.average()
+                    else null
+
+
                 val totalDiff = scores.indices
                     .filter { scores[it] > 0 }
                     .sumOf { hole ->
@@ -175,6 +202,114 @@ fun SummaryScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
+// TOP DIVIDER
+                HorizontalDivider(
+                    color = colors.accent.copy(alpha = 0.4f)
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+// STATS ROW (BEST + AVG)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+                        Text(
+                            text = "BEST",
+                            color = colors.subText,
+                            fontSize = 12.sp
+                        )
+
+                        Text(
+                            text = best?.let {
+                                val hole = bestHole?.plus(1)
+                                val score = when {
+                                    it > 0 -> "+$it"
+                                    it == 0 -> "E"
+                                    else -> it.toString()
+                                }
+                                "$score (H$hole)"
+                            } ?: "-",
+
+                            color = when {
+                                best == null -> colors.subText
+                                best > 0 -> Color(0xFFFF5252)
+                                best < 0 -> Color(0xFF4CAF50)
+                                else -> colors.text
+                            },
+
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+                        Text(
+                            text = "AVG",
+                            color = colors.subText,
+                            fontSize = 12.sp
+                        )
+
+                        Text(
+                            text = average?.let {
+                                val rounded = String.format("%.1f", it)
+                                if (it > 0) "+$rounded"
+                                else if (it == 0.0) "E"
+                                else rounded
+                            } ?: "-",
+
+                            color = when {
+                                average == null -> colors.subText
+                                average > 0 -> Color(0xFFFF5252)
+                                average < 0 -> Color(0xFF4CAF50)
+                                else -> colors.text
+                            },
+
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+                        Text(
+                            text = "WORST",
+                            color = colors.subText,
+                            fontSize = 12.sp
+                        )
+
+                        Text(
+                            text = worst?.let {
+                                val hole = worstHole?.plus(1)
+                                val score = when {
+                                    it > 0 -> "+$it"
+                                    it == 0 -> "E"
+                                    else -> it.toString()
+                                }
+                                "$score (H$hole)"
+                            } ?: "-",
+
+                            color = when {
+                                worst == null -> colors.subText
+                                worst > 0 -> Color(0xFFFF5252)
+                                worst < 0 -> Color(0xFF4CAF50)
+                                else -> colors.text
+                            },
+
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+// BOTTOM DIVIDER
                 HorizontalDivider(
                     color = colors.accent.copy(alpha = 0.4f)
                 )
@@ -193,6 +328,11 @@ fun SummaryScreen(
                 ) {
 
                     itemsIndexed(scores) { index, score ->
+
+
+                        val isBest = index == bestHole
+                        val isWorst = index == worstHole
+
 
                         val diff =
                             if (score == 0) null
@@ -237,7 +377,16 @@ fun SummaryScreen(
                                     .height(64.dp)
                                     .width(52.dp)
                                     .clip(RoundedCornerShape(20.dp))
-                                    .background(bgColor),
+                                    .background(bgColor)
+                                    .border(
+                                        width = if (isBest || isWorst) 2.dp else 0.dp,
+                                        color = when {
+                                            isBest -> Color(0xFF4CAF50)   // vihreä
+                                            isWorst -> Color(0xFFFF5252)  // punainen
+                                            else -> Color.Transparent
+                                        },
+                                        shape = RoundedCornerShape(20.dp)
+                                    ),
 
                                 contentAlignment = Alignment.Center
                             ) {

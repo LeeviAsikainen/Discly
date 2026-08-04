@@ -10,5 +10,7 @@ data class GameResult(
 
     val pars: List<Int>,
 
+    val durationSec: Long? = null,
+
     val timestamp: Long = System.currentTimeMillis()
 )

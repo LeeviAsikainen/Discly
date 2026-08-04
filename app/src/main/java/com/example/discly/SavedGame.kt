@@ -14,5 +14,7 @@ data class SavedGame(
 
     val currentHole: Int,
 
-    val timestamp: Long = System.currentTimeMillis()
+    val timestamp: Long = System.currentTimeMillis(),
+
+    val startTime: Long = System.currentTimeMillis()
 )

@@ -12,12 +12,37 @@ import androidx.datastore.preferences.core.edit
 // Coroutines / Flow
 import kotlinx.coroutines.flow.map
 
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+
+
+
 // JSON
 
 // 🔹 YKSI DataStore instanssi
 val Context.dataStore by preferencesDataStore(name = "settings")
 
 object AppStorage {
+
+    fun loadResults(
+        context: Context
+    ): List<GameResult> {
+
+        return loadHistory(context)
+    }
+
+    fun saveResult(context: Context, result: GameResult) {
+
+        val prefs = context.getSharedPreferences("discly_prefs", Context.MODE_PRIVATE)
+
+        val existing = loadResults(context).toMutableList()
+
+        existing.add(result)
+
+        val json = Gson().toJson(existing)
+
+        prefs.edit().putString("results", json).apply()
+    }
 
     // =========================
     // 🔧 SETTINGS (DataStore)
@@ -88,6 +113,12 @@ object AppStorage {
             game.timestamp
         )
 
+        json.put(
+            "startTime",
+            game.startTime
+        )
+
+
 
         json.put(
             "players",
@@ -136,6 +167,8 @@ object AppStorage {
     ): SavedGame? {
 
 
+
+
         return try {
 
 
@@ -182,14 +215,23 @@ object AppStorage {
 
 
                 timestamp =
-                    json.getLong("timestamp")
+                    json.getLong("timestamp"),
+
+                startTime =
+                    if (json.has("startTime"))
+                        json.getLong("startTime")
+                    else
+                        System.currentTimeMillis()
             )
+
+
 
 
         } catch (e: Exception) {
 
             null
         }
+
     }
 
 
@@ -229,6 +271,7 @@ object AppStorage {
 
             json.put("courseName", it.courseName)
             json.put("timestamp", it.timestamp)
+            json.put("durationSec", it.durationSec)
             json.put("players", JSONArray(it.players))
             json.put("pars", JSONArray(it.pars))
 
@@ -289,6 +332,11 @@ object AppStorage {
             json.put(
                 "timestamp",
                 it.timestamp
+            )
+
+            json.put(
+                "durationSec",
+                it.durationSec
             )
 
 
@@ -383,7 +431,13 @@ object AppStorage {
                             .toIntList(),
 
                     timestamp =
-                        json.getLong("timestamp")
+                        json.getLong("timestamp"),
+
+                    durationSec =
+                        if (json.has("durationSec"))
+                            json.getLong("durationSec")
+                        else
+                            null
                 )
             }
 

@@ -124,6 +124,12 @@ fun MainScreen(
 
                 currentScreen = AppScreen.CourseSelect
             }
+
+            AppScreen.CourseStats -> {
+
+                currentScreen = AppScreen.CourseSelect
+            }
+
         }
     }
 
@@ -167,7 +173,8 @@ fun MainScreen(
                         },
                         pars = course.pars,
                         totalHoles = course.holeCount,
-                        currentHole = 0
+                        currentHole = 0,
+                        startTime = System.currentTimeMillis()
                     )
 
                     AppStorage.saveCurrentGame(context, newGame)
@@ -175,7 +182,8 @@ fun MainScreen(
                     // 🔴 KRITTIINEN
                     unfinishedGame = newGame
 
-                    currentScreen = AppScreen.Game
+                    //currentScreen = AppScreen.Game
+                    currentScreen = AppScreen.CourseStats
                 },
 
 
@@ -284,7 +292,8 @@ fun MainScreen(
 
                         totalHoles = course.holeCount,
 
-                        currentHole = 0
+                        currentHole = 0,
+                        startTime = System.currentTimeMillis()
                     )
 
 
@@ -326,6 +335,9 @@ fun MainScreen(
                 startHole = unfinishedGame?.currentHole ?: 0,
 
                 colors = colors,
+
+                startTime = unfinishedGame?.startTime
+                    ?: System.currentTimeMillis(),
 
                 onGameFinished = {
                     refreshUnfinishedGame()
@@ -393,6 +405,44 @@ fun MainScreen(
 
                     onMenu = {
                         currentScreen = AppScreen.CourseSelect
+                    }
+                )
+            }
+        }
+        AppScreen.CourseStats -> {
+
+            selectedCourse?.let { course ->
+
+                val rounds = AppStorage.loadHistory(context)
+
+                CourseStatsScreen(
+                    rounds = rounds,
+                    courseName = course.name,
+                    colors = colors,
+
+                    onBack = {
+                        currentScreen = AppScreen.CourseSelect
+                    },
+
+                    onStartGame = {
+
+                        val newGame = SavedGame(
+                            courseName = course.name,
+                            players = players,
+                            scores = players.map {
+                                List(course.holeCount) { 0 }
+                            },
+                            pars = course.pars,
+                            totalHoles = course.holeCount,
+                            currentHole = 0,
+                            startTime = System.currentTimeMillis()
+                        )
+
+                        AppStorage.saveCurrentGame(context, newGame)
+
+                        unfinishedGame = newGame
+
+                        currentScreen = AppScreen.Game
                     }
                 )
             }
