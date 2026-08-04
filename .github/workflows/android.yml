@@ -5,6 +5,10 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
+# 🔥 KORJAA "Resource not accessible by integration"
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,21 +20,28 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: temurin
+          java-version: 17
 
       - name: Grant permission
         run: chmod +x gradlew
 
+      # 🚀 BUILD
       - name: Build Release APK
         run: ./gradlew assembleRelease
 
+      # 🔍 DEBUG (näet mihin APK oikeasti meni)
+      - name: List build outputs
+        run: ls -R app/build/outputs/
+
+      # 📦 ARTIFACT
       - name: Upload APK (artifact)
         uses: actions/upload-artifact@v4
         with:
           name: app-release
           path: app/build/outputs/apk/release/app-release.apk
 
+      # 🏷 RELEASE
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
