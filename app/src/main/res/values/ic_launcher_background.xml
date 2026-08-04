@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  ~ Copyright (C) 2026 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0
+  -->
+
+<resources>
+    <color name="ic_launcher_background">#3DDC84</color>
+</resources>
