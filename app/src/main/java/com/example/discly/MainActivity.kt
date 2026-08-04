@@ -1,4 +1,4 @@
-package com.example.udisc
+package com.example.discly
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.launch
-import com.example.udisc.ui.theme.uDiscTheme
+import com.example.discly.ui.theme.uDiscTheme
 
 
 class MainActivity : ComponentActivity() {

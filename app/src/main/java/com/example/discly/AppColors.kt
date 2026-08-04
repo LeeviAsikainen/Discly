@@ -1,4 +1,4 @@
-package com.example.udisc
+package com.example.discly
 
 import androidx.compose.ui.graphics.Color
 

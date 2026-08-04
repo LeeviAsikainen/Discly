@@ -1,4 +1,4 @@
-package com.example.udisc
+package com.example.discly
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures

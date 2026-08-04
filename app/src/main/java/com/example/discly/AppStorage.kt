@@ -1,4 +1,4 @@
-package com.example.udisc
+package com.example.discly
 
 import android.content.Context
 import org.json.JSONArray
@@ -13,8 +13,6 @@ import androidx.datastore.preferences.core.edit
 import kotlinx.coroutines.flow.map
 
 // JSON
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 
 // 🔹 YKSI DataStore instanssi
 val Context.dataStore by preferencesDataStore(name = "settings")

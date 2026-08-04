@@ -1,4 +1,4 @@
-package com.example.udisc
+package com.example.discly
 enum class ThemeMode {
     LIGHT_FOREST,
     ROSE,

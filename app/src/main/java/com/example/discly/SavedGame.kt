@@ -1,6 +1,6 @@
-package com.example.udisc
+package com.example.discly
 
-data class GameResult(
+data class SavedGame(
 
     val courseName: String,
 
@@ -9,6 +9,10 @@ data class GameResult(
     val scores: List<List<Int>>,
 
     val pars: List<Int>,
+
+    val totalHoles: Int,
+
+    val currentHole: Int,
 
     val timestamp: Long = System.currentTimeMillis()
 )

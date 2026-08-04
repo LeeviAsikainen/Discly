@@ -1,4 +1,4 @@
-package com.example.udisc
+package com.example.discly
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.material3.AlertDialog

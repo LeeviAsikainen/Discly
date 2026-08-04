@@ -1,4 +1,4 @@
-package com.example.udisc
+package com.example.discly
 
 data class Course(
     val name: String,
