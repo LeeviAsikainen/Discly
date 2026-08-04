@@ -74,8 +74,17 @@ This software is provided "as is", without warranty of any kind.
 This project is **source-available**, not open source.
 
 You can freely download and use the app via GitHub, but redistribution and commercial use are restricted.
-<img width="1240" height="2772" alt="1000020219" src="https://github.com/user-attachments/assets/e6b985f4-b974-4f84-924b-a278daf408ac" />
-<img width="1240" height="2772" alt="1000020218" src="https://github.com/user-attachments/assets/425337b3-0256-4412-949b-ac2ed2f58244" />
-<img width="1240" height="2772" alt="1000020217" src="https://github.com/user-attachments/assets/db14a4bf-c539-426b-ac74-803042174379" />
-<img width="1240" height="2772" alt="1000020216" src="https://github.com/user-attachments/assets/52d1c223-259a-4f71-90fd-78fe16a2c694" />
 
+---
+
+## 📸 Screenshots
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/52d1c223-259a-4f71-90fd-78fe16a2c694" width="200"/>
+  <img src="https://github.com/user-attachments/assets/db14a4bf-c539-426b-ac74-803042174379" width="200"/>
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/425337b3-0256-4412-949b-ac2ed2f58244" width="200"/>
+  <img src="https://github.com/user-attachments/assets/e6b985f4-b974-4f84-924b-a278daf408ac" width="200"/>
+</p>
