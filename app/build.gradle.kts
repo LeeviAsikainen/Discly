@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)      // 🔥 TÄRKEÄ FIX
     alias(libs.plugins.kotlin.compose)
 }
 
@@ -12,8 +13,8 @@ android {
         minSdk = 24
         targetSdk = 34
 
-        // 🔥 AUTO VERSION CODE (GitHub Actions)
-        val versionCodeCI = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 1
+        // 🔥 CI versionointi (turvallinen fallback)
+        val versionCodeCI = (System.getenv("GITHUB_RUN_NUMBER") ?: "1").toInt()
 
         versionCode = versionCodeCI
         versionName = "1.0.$versionCodeCI"
@@ -25,7 +26,7 @@ android {
         getByName("release") {
             isMinifyEnabled = false
 
-            // ⚠️ jotta APK build toimii ilman keystorea
+            // ⚠️ debug signing jotta CI build toimii
             signingConfig = signingConfigs.getByName("debug")
 
             proguardFiles(
@@ -44,8 +45,17 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+
     buildFeatures {
         compose = true
+    }
+
+    // 🔥 TÄRKEÄ Compose yhteensopivuus
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.14"
     }
 }
 
@@ -53,7 +63,9 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("com.google.code.gson:gson:2.10.1")
 
+    // Compose BOM
     implementation(platform(libs.androidx.compose.bom))
+
     implementation("androidx.compose.material:material-icons-extended")
 
     implementation(libs.androidx.activity.compose)
