@@ -56,7 +56,7 @@ fun CourseSelectScreen(
         ) {
 
             Text(
-                text = "uDisc",
+                text = "Discly",
                 style = MaterialTheme.typography.headlineMedium,
                 color = colors.text
             )
@@ -116,6 +116,17 @@ fun CourseSelectScreen(
                 Spacer(modifier = Modifier.weight(0.3f))
             } else {
                 Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            if (searchQuery.isEmpty()) {
+                Text(
+                    text = "Select a course to start a round",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = colors.subText,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 12.dp),
+                )
             }
 
             // 🔍 YKSI JA SAMA TEXTFIELD
