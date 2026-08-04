@@ -394,7 +394,129 @@ object AppStorage {
         }
     }
 
+// =========================
+// 🥏 COURSES
+// =========================
 
+    private const val COURSES =
+        "courses.json"
+
+
+
+    fun saveCourses(
+        context: Context,
+        courses: List<Course>
+    ) {
+
+        val array = JSONArray()
+
+
+        courses.forEach { course ->
+
+            val json = JSONObject()
+
+            json.put(
+                "name",
+                course.name
+            )
+
+            json.put(
+                "custom",
+                course.custom
+            )
+
+
+            json.put(
+                "pars",
+                JSONArray(course.pars)
+            )
+
+
+            array.put(json)
+        }
+
+
+        context.openFileOutput(
+            COURSES,
+            Context.MODE_PRIVATE
+        ).use {
+
+            it.write(
+                array.toString().toByteArray()
+            )
+        }
+    }
+
+
+
+    fun loadCourses(
+        context: Context
+    ): List<Course> {
+
+
+        return try {
+
+
+            val text =
+                context.openFileInput(COURSES)
+                    .bufferedReader()
+                    .readText()
+
+
+            val array =
+                JSONArray(text)
+
+
+
+            List(array.length()) {
+
+
+                val json =
+                    array.getJSONObject(it)
+
+
+                Course(
+
+                    name =
+                        json.getString("name"),
+
+
+                    pars =
+                        json.getJSONArray("pars")
+                            .toIntList(),
+
+
+                    custom =
+                        json.getBoolean("custom")
+                )
+            }
+
+
+        } catch(e: Exception){
+
+            emptyList()
+        }
+    }
+
+
+
+    fun deleteCourse(
+        context: Context,
+        course: Course
+    ) {
+
+        val courses = loadCourses(context)
+            .toMutableList()
+
+        courses.removeAll {
+            it.name == course.name
+        }
+
+        saveCourses(
+            context,
+            courses
+        )
+    }
 
 }
 

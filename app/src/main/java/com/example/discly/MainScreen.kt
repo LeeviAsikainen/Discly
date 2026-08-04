@@ -11,6 +11,9 @@ fun MainScreen(
     colors: AppColors,
 
 ) {
+    var newCourseName by remember {
+        mutableStateOf("")
+    }
 
     var currentScreen by remember {
         mutableStateOf<AppScreen>(AppScreen.CourseSelect)
@@ -32,7 +35,10 @@ fun MainScreen(
         mutableStateOf<Course?>(null)
     }
 
-    val savedCourses = CoursesDB
+    var savedCourses by remember {
+        mutableStateOf(CoursesDB)
+    }
+
 
     val context = LocalContext.current
 
@@ -43,6 +49,12 @@ fun MainScreen(
 
     LaunchedEffect(Unit) {
 
+        val customCourses =
+            AppStorage.loadCourses(context)
+
+        savedCourses =
+            CoursesDB + customCourses
+
         unfinishedGame =
             AppStorage.loadCurrentGame(context)
     }
@@ -52,6 +64,15 @@ fun MainScreen(
 
         unfinishedGame =
             AppStorage.loadCurrentGame(context)
+    }
+
+    fun refreshCourses() {
+
+        val customCourses =
+            AppStorage.loadCourses(context)
+
+        savedCourses =
+            CoursesDB + customCourses
     }
 
     BackHandler {
@@ -140,7 +161,9 @@ fun MainScreen(
                 },
 
 
-                onNewCourse = {
+                onNewCourse = { name ->
+
+                    newCourseName = name
 
                     currentScreen = AppScreen.Start
                 },
@@ -159,33 +182,74 @@ fun MainScreen(
                 onDeleteUnfinishedGame = {
                     AppStorage.deleteCurrentGame(context)
                     unfinishedGame = null
+                },
+                onDeleteCourse = {
+
+                    AppStorage.deleteCourse(
+                        context,
+                        it
+                    )
+
+                    refreshCourses()
                 }
             )
         }
 
         AppScreen.Start -> {
 
-            StartScreen { p, h, c ->
+            StartScreen(
+                initialCourseName = newCourseName
+            ) { p, h, c, save ->
+
 
                 players = p
                 totalHoles = h
                 courseName = c
 
-                val newGame = SavedGame(
-                    courseName = c,
-                    players = p,
-                    scores = p.map { List(h) { 0 } },
-                    pars = List(h) { 3 },
-                    totalHoles = h,
-                    currentHole = 0
-                )
 
-                AppStorage.saveCurrentGame(context, newGame)
+                if(save){
 
-                // 🔴 KRITTIINEN
-                unfinishedGame = newGame
+                    val oldCourses =
+                        AppStorage.loadCourses(context)
+
+
+                    val exists =
+                        oldCourses.any {
+                            it.name.equals(
+                                c,
+                                ignoreCase = true
+                            )
+                        }
+
+
+                    if(exists){
+
+                        return@StartScreen false
+                    }
+
+
+                    val newCourse =
+                        Course(
+                            name = c,
+                            pars = List(h){3},
+                            custom = true
+                        )
+
+
+                    AppStorage.saveCourses(
+                        context,
+                        oldCourses + newCourse
+                    )
+
+
+                    savedCourses =
+                        CoursesDB + oldCourses + newCourse
+                }
+
 
                 currentScreen = AppScreen.Game
+
+                true
             }
         }
 

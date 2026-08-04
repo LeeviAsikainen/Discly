@@ -12,15 +12,22 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun StartScreen(
+    initialCourseName: String = "",
     onStartGame: (
         players: List<String>,
         holes: Int,
-        courseName: String
-    ) -> Unit
+        courseName: String,
+        saveCourse: Boolean
+    ) -> Boolean
 ) {
 
-    var courseName by remember {
-        mutableStateOf("")
+
+    var courseError by remember {
+        mutableStateOf(false)
+    }
+
+    var courseName by remember(initialCourseName) {
+        mutableStateOf(initialCourseName)
     }
 
     var players by remember {
@@ -28,6 +35,8 @@ fun StartScreen(
     }
 
     var holeCountText by remember { mutableStateOf("") }
+
+    var saveCourse by remember { mutableStateOf(true) }
 
     Column(
         modifier = Modifier
@@ -63,6 +72,14 @@ fun StartScreen(
 
             modifier = Modifier.fillMaxWidth()
         )
+
+        if (courseError) {
+
+            Text(
+                text = "A course with this name already exists",
+                color = Color.Red
+            )
+        }
 
         // --- RATOJEN MÄÄRÄ ---
         Text("Number Of Holes", color = Color.White)
@@ -153,7 +170,7 @@ fun StartScreen(
                     }
                 }
 
-                onStartGame(
+                val success = onStartGame(
                     finalPlayers,
                     holes,
 
@@ -161,8 +178,12 @@ fun StartScreen(
                         "Unnamed Course"
                     } else {
                         courseName
-                    }
+                    },
+
+                    saveCourse
                 )
+
+                courseError = !success
             },
             modifier = Modifier.fillMaxWidth()
         ) {

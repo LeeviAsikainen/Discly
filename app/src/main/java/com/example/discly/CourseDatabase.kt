@@ -2,14 +2,15 @@ package com.example.discly
 
 data class Course(
     val name: String,
-    val pars: List<Int>
+    val pars: List<Int>,
+    val custom: Boolean = false
 ) {
-
     val holeCount: Int
         get() = pars.size
 }
 
 val CoursesDB = listOf(
+
 
     // 🔹 Puijo
     Course(
