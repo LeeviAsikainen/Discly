@@ -1,0 +1,68 @@
+package com.example.udisc
+
+import android.content.Context
+
+// DataStore
+import androidx.datastore.preferences.core.*
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.datastore.preferences.core.edit
+
+// Coroutines / Flow
+import kotlinx.coroutines.flow.map
+
+// JSON
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+
+// 🔹 YKSI DataStore instanssi
+val Context.dataStore by preferencesDataStore(name = "settings")
+
+object AppStorage {
+
+    // =========================
+    // 🔧 SETTINGS (DataStore)
+    // =========================
+
+    private val THEME_KEY = stringPreferencesKey("theme")
+
+    fun getTheme(context: Context) =
+        context.dataStore.data.map { prefs ->
+            runCatching {
+                ThemeMode.valueOf(prefs[THEME_KEY] ?: "")
+            }.getOrDefault(ThemeMode.PINK)
+        }
+
+    suspend fun setTheme(context: Context, theme: ThemeMode) {
+        context.dataStore.edit { prefs ->
+            prefs[THEME_KEY] = theme.name
+        }
+    }
+
+    // =========================
+    // 🎮 GAMES (JSON FILE)
+    // =========================
+
+    private const val FILE_NAME = "games.json"
+
+    fun saveGames(context: Context, games: List<GameResult>) {
+        val json = Gson().toJson(games)
+
+        context.openFileOutput(FILE_NAME, Context.MODE_PRIVATE).use {
+            it.write(json.toByteArray())
+        }
+    }
+
+    fun loadGames(context: Context): List<GameResult> {
+        return try {
+            val json = context.openFileInput(FILE_NAME)
+                .bufferedReader()
+                .use { it.readText() }
+
+            val type = object : TypeToken<List<GameResult>>() {}.type
+            Gson().fromJson<List<GameResult>>(json, type) ?: emptyList()
+
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+}

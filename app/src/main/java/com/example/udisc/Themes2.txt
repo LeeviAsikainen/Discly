@@ -1,0 +1,245 @@
+package com.example.udisc
+
+import androidx.compose.ui.graphics.Color
+
+
+val CrimsonTheme = AppColors(
+    background = Color(0xFF590D22),
+    card = Color(0xFF800F2F),
+    accent = Color(0xFFFF4D6D),
+
+    text = Color.White,
+    subText = Color(0xFFFFB3C1),
+
+    ball = Color.White
+)
+
+
+val EarthTheme = AppColors(
+    background = Color(0xFF0A100D),
+    card = Color(0xFFB9BAA3),
+    accent = Color(0xFFA22C29),
+
+    text = Color.White,
+    subText = Color(0xFFD6D5C9),
+
+    ball = Color.White
+)
+
+
+val RoseTheme = AppColors(
+    background = Color(0xFFFFE5EC),
+    card = Color(0xFFFFB3C6),
+    accent = Color(0xFFFB6F92),
+
+    text = Color(0xFF590D22),
+    subText = Color(0xFF800F2F),
+
+    ball = Color.White
+)
+
+
+val LavenderSkyTheme = AppColors(
+    background = Color(0xFFD7BCE8),
+    card = Color(0xFFC8B6FF),
+    accent = Color(0xFFB8C0FF),
+
+    text = Color(0xFF121212),
+    subText = Color(0xFF6C6C8A),
+
+    ball = Color.White
+)
+
+
+val OceanGreenTheme = AppColors(
+    background = Color(0xFF22577A),
+    card = Color(0xFF38A3A5),
+    accent = Color(0xFF57CC99),
+
+    text = Color.White,
+    subText = Color(0xFFC7F9CC),
+
+    ball = Color.White
+)
+
+
+val ForestGreyTheme = AppColors(
+    background = Color(0xFF2F3E46),
+    card = Color(0xFF52796F),
+    accent = Color(0xFF84A98C),
+
+    text = Color.White,
+    subText = Color(0xFFCAD2C5),
+
+    ball = Color.White
+)
+
+
+val DesertTheme = AppColors(
+    background = Color(0xFF0D1F22),
+    card = Color(0xFF3C5233),
+    accent = Color(0xFFB38A58),
+
+    text = Color.White,
+    subText = Color(0xFF6F732F),
+
+    ball = Color.White
+)
+
+
+val ArcticTheme = AppColors(
+    background = Color(0xFF0D131C),
+    card = Color(0xFF1C2430),
+    accent = Color(0xFF7C858F),
+
+    text = Color.White,
+    subText = Color(0xFFD9DDE1),
+
+    ball = Color.White
+)
+
+
+val IceBlueTheme = AppColors(
+    background = Color(0xFFCAE9FF),
+    card = Color(0xFF62B6CB),
+    accent = Color(0xFF5FA8D3),
+
+    text = Color.White,
+    subText = Color(0xFF1B4965),
+
+    ball = Color.White
+)
+val OceanTheme = AppColors(
+
+    background = Color(0xFF0B2027),
+
+    card = Color(0xFF40798C),
+
+    accent = Color(0xFF70A9A1),
+
+    text = Color(0xFFF6F1D1),
+
+    subText = Color(0xFFCFD7C7),
+
+    ball = Color(0xFFF6F1D1)
+)
+val LavenderTheme = AppColors(
+    background = Color(0xFFFDE2FF),
+    card = Color(0xFFE8CEE4),
+    accent = Color(0xFF8884FF),
+
+    text = Color(0xFF5D576B),
+    subText = Color(0xFF8A8495),
+
+    ball = Color(0xFFD7BCE8)
+)
+val PinkTheme = AppColors(
+    background = Color(0xFF121212),
+    card = Color(0xFF1E1E1E),
+    accent = Color(0xFFFF4D8D),
+
+    text = Color.White,
+    subText = Color(0xFF9E9E9E),
+
+    ball = Color.White
+)
+
+val ForestTheme = AppColors(
+    background = Color(0xFF0F1A14),
+    card = Color(0xFF1D2B22),
+    accent = Color(0xFF7BC96F),
+
+    text = Color.White,
+    subText = Color(0xFFA5B5AA),
+
+    ball = Color.White
+)
+
+val NeonTheme = AppColors(
+    background = Color.Black,
+    card = Color(0xFF111111),
+    accent = Color(0xFF00E5FF),
+
+    text = Color.White,
+    subText = Color(0xFF8A8A8A),
+
+    ball = Color.White
+)
+
+val PurpleTheme = AppColors(
+    background = Color(0xFF15121C),
+    card = Color(0xFF231D2E),
+    accent = Color(0xFFB388FF),
+
+    text = Color.White,
+    subText = Color(0xFFAAA0C2),
+
+    ball = Color.White
+)
+
+val OrangeTheme = AppColors(
+    background = Color(0xFF18120D),
+    card = Color(0xFF2A2018),
+    accent = Color(0xFFFFA726),
+
+    text = Color.White,
+    subText = Color(0xFFC2B1A3),
+
+    ball = Color.White
+)
+
+val IceTheme = AppColors(
+    background = Color(0xFF0D141A),
+    card = Color(0xFF16212B),
+    accent = Color(0xFF81D4FA),
+
+    text = Color.White,
+    subText = Color(0xFF9FB3C1),
+
+    ball = Color.White
+)
+
+val OceanLightTheme = AppColors(
+    background = Color(0xFF1B4965),
+    card = Color(0xFF62B6CB),
+    accent = Color(0xFF5FA8D3),
+
+    text = Color.White,
+    subText = Color(0xFFCAE9FF),
+
+    ball = Color(0xFFBEE9E8)
+)
+
+fun getTheme(mode: ThemeMode): AppColors {
+
+    return when (mode) {
+
+        ThemeMode.OCEAN_LIGHT -> OceanLightTheme
+
+        ThemeMode.OCEAN -> OceanTheme
+
+        ThemeMode.LAVENDER -> LavenderTheme
+
+        ThemeMode.PINK -> PinkTheme
+
+        ThemeMode.FOREST -> ForestTheme
+
+        ThemeMode.NEON -> NeonTheme
+
+        ThemeMode.PURPLE -> PurpleTheme
+
+        ThemeMode.ORANGE -> OrangeTheme
+
+        ThemeMode.ICE -> IceTheme
+
+        ThemeMode.CRIMSON -> CrimsonTheme
+        ThemeMode.EARTH -> EarthTheme
+        ThemeMode.ROSE -> RoseTheme
+        ThemeMode.LAVENDER_SKY -> LavenderSkyTheme
+        ThemeMode.OCEAN_GREEN -> OceanGreenTheme
+        ThemeMode.FOREST_GREY -> ForestGreyTheme
+        ThemeMode.DESERT -> DesertTheme
+        ThemeMode.ARCTIC -> ArcticTheme
+        ThemeMode.ICE_BLUE -> IceBlueTheme
+    }
+}

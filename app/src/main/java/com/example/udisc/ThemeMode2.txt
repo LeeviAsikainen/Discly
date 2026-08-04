@@ -1,0 +1,22 @@
+package com.example.udisc
+
+enum class ThemeMode {
+    OCEAN_LIGHT,
+    CRIMSON,
+    EARTH,
+    ROSE,
+    LAVENDER_SKY,
+    OCEAN_GREEN,
+    FOREST_GREY,
+    DESERT,
+    ARCTIC,
+    ICE_BLUE,
+    OCEAN,
+    LAVENDER,
+    PINK,
+    FOREST,
+    NEON,
+    PURPLE,
+    ORANGE,
+    ICE
+}

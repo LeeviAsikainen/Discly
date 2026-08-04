@@ -1,0 +1,137 @@
+package com.example.udisc
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.AlertDialogDefaults.containerColor
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.material3.ButtonDefaults
+
+@Composable
+fun SettingsScreen(
+    currentTheme: ThemeMode,
+    onThemeSelected: (ThemeMode) -> Unit,
+    onBack: () -> Unit,
+    colors: AppColors
+) {
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(colors.background)
+            .statusBarsPadding()
+            .navigationBarsPadding()
+            .padding(16.dp),
+
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+
+        Text(
+            text = "Settings",
+            style = MaterialTheme.typography.headlineMedium,
+            color = colors.text
+        )
+
+        Text(
+            text = "Theme: ${currentTheme.name}",
+            color = colors.text
+        )
+
+
+        Button(
+            onClick = {
+                onThemeSelected(ThemeMode.PINK)
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colors.accent
+            ),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Pink")
+        }
+
+
+        Button(
+            onClick = {
+                onThemeSelected(ThemeMode.FOREST)
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colors.accent
+            ),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Forest")
+        }
+
+
+        Button(
+            onClick = {
+                onThemeSelected(ThemeMode.NEON)
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colors.accent
+            ),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Neon")
+        }
+
+
+        Button(
+            onClick = {
+                onThemeSelected(ThemeMode.PURPLE)
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colors.accent
+            ),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Purple")
+        }
+
+
+        Button(
+            onClick = {
+                onThemeSelected(ThemeMode.ORANGE)
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colors.accent
+            ),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Orange")
+        }
+
+
+        Button(
+            onClick = {
+                onThemeSelected(ThemeMode.ICE)
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colors.accent
+            ),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Ice")
+        }
+
+
+        Spacer(modifier = Modifier.weight(1f))
+
+
+        Button(
+            onClick = onBack,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colors.accent
+            ),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Back")
+        }
+    }
+}
