@@ -6,6 +6,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
@@ -34,6 +35,15 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.foundation.Image
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.painterResource
+import java.nio.file.Files.size
 
 
 @Composable
@@ -45,6 +55,7 @@ fun GameScreen(
     savedScores: List<List<Int>>? = null,
     startHole: Int = 0,
     colors: AppColors,
+    selectedDisc: DiscType,
     onGameFinished: () -> Unit,
     onExitToMenu: () -> Unit,
     startTime: Long = System.currentTimeMillis(),
@@ -166,7 +177,7 @@ fun GameScreen(
     var containerHeight by remember { mutableStateOf(1f) }
     var containerWidth by remember { mutableStateOf(1f) }
 
-    val circleSizeDp = 100.dp
+    val circleSizeDp = 150.dp
     val circleSizePx = with(density) { circleSizeDp.toPx() }
 
     var dragY by remember { mutableStateOf(0f) }
@@ -467,6 +478,36 @@ fun GameScreen(
             }
         }
 
+        // --- SCORE now ---
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            val score = scoreTable[currentPlayerIndex][currentHoleIndex]
+
+            AnimatedVisibility(
+                visible = score != 0,
+                enter = fadeIn(
+                    animationSpec = tween(
+                        durationMillis = 400,
+                        delayMillis = 150 // pieni viive ennen kuin fade alkaa
+                    )
+                ),
+                exit = fadeOut(
+                    animationSpec = tween(durationMillis = 200)
+                )
+            ) {
+                Text(
+                    text = score.toString(),
+                    color = colors.text.copy(alpha = 0.4f),
+                    style = MaterialTheme.typography.labelSmall,
+                    fontSize = 342.sp,
+                    modifier = Modifier.offset(y = 70.dp)
+                )
+            }
+        }
+
 
 
         // --- SCORE LIST ---
@@ -553,6 +594,8 @@ fun GameScreen(
         }
 
         // --- PALLO ---
+
+        // --- KIEKKO ---
         Box(
             modifier = Modifier
                 .offset {
@@ -567,34 +610,27 @@ fun GameScreen(
                     scaleX = ballScale.value
                     scaleY = ballScale.value
                 }
-                .clip(CircleShape)
-                .background(colors.ball)
                 .align(Alignment.TopCenter)
                 .pointerInput(containerHeight) {
                     detectDragGestures(
-
                         onDragStart = {
                             showDragHint = false
                             isDragging = true
                             isSelecting = true
                         },
-
                         onDragEnd = {
                             isDragging = false
                             isSelecting = false
                             dragY = idleY
 
-                            // 🔥 JOS "Muu" VALITTU → avaa dialogi
                             if (currentScore == 0) {
                                 showCustomDialog = true
                                 return@detectDragGestures
                             }
 
-                            // seuraava pelaaja
                             currentPlayerIndex =
                                 (currentPlayerIndex + 1) % players.size
                         },
-
                         onDrag = { change, dragAmount ->
                             change.consume()
 
@@ -610,13 +646,8 @@ fun GameScreen(
                                 lastScore = score
                             }
 
-                            if (score != 0) {
-                                currentScore = score
-                            } else {
-                                currentScore = 0
-                            }
+                            currentScore = score
 
-                            // tallenna
                             scoreTable = scoreTable.toMutableList().also { table ->
                                 table[currentPlayerIndex] =
                                     table[currentPlayerIndex].toMutableList().also {
@@ -628,6 +659,19 @@ fun GameScreen(
                 },
             contentAlignment = Alignment.Center
         ) {
+
+            Image(
+                painter = painterResource(id = selectedDisc.drawable),
+                contentDescription = null,
+                modifier = Modifier.matchParentSize()
+            )/*
+            // 🎯 KIEKKO KUVA
+            FlatDisc(
+                modifier = Modifier.matchParentSize()
+            )
+
+
+// 🎯 TEKSTIT
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
@@ -635,14 +679,17 @@ fun GameScreen(
                 Text(
                     text = scoreTable[currentPlayerIndex][currentHoleIndex].toString(),
                     color = colors.accent,
+                    style = MaterialTheme.typography.labelSmall,
                     fontSize = 42.sp
                 )
+
                 Text(
                     text = "THROWS",
                     style = MaterialTheme.typography.labelSmall,
                     color = colors.subText
                 )
             }
+            */
         }
 
         Box(
@@ -932,5 +979,108 @@ fun triggerBallFX(
         // 3) haptic “impact”
         //haptic.performHapticFeedback(
         //    HapticFeedbackType.TextHandleMove
+    }
+}
+@Composable
+fun FlatDisc(
+    modifier: Modifier = Modifier,
+    color: Color = Color(0xFFB3E5FC) // vaalea sininen
+) {
+    Canvas(modifier = modifier) {
+
+        val radius = size.minDimension / 2f
+        val center = Offset(size.width / 2, size.height / 2)
+
+        // 🎨 1. Base (tasainen mattapinta)
+        drawCircle(
+            color = color,
+            radius = radius,
+            center = center
+        )
+
+        // 🟦 Putter rim (jyrkkä kaarre)
+        drawCircle(
+            brush = Brush.radialGradient(
+                colors = listOf(
+                    Color.Transparent,              // flat center
+                    Color.Transparent,
+                    Color.Transparent,
+                    Color.Transparent,
+                    color.copy(alpha = 0.9f),       // alkaa tummentua
+                    color.copy(alpha = 0.7f),
+                    Color.Black.copy(alpha = 0.25f) // jyrkkä reuna
+                ),
+
+                center = center,
+                radius = radius
+            ),
+            radius = radius,
+            center = center
+        )
+
+        // ✨ ohut valo reunan yläosaan
+        drawCircle(
+            brush = Brush.radialGradient(
+                colors = listOf(
+                    Color.Transparent,
+                    Color.White.copy(alpha = 0.35f),
+                    Color.Transparent
+                ),
+                //stops = listOf(0.82f, 0.9f, 1f),
+                center = Offset(center.x, center.y - radius * 0.2f),
+                radius = radius
+            ),
+            radius = radius,
+            center = center
+        )
+
+        // 🌫️ 2. Erittäin subtle edge shading (antaa muodon ilman 3D:tä)
+        drawCircle(
+            brush = Brush.radialGradient(
+                colors = listOf(
+                    Color.Transparent,
+                    Color.Black.copy(alpha = 0.08f)
+                ),
+                center = center,
+                radius = radius
+            ),
+            radius = radius,
+            center = center
+        )
+
+        // ☀️ 3. Auringon heijastus (flat specular)
+        // ☀️ Realistinen auringon kiilto (yläreunaan)
+        drawOval(
+            brush = Brush.radialGradient(
+                colors = listOf(
+                    Color.White.copy(alpha = 0.45f),
+                    Color.Transparent
+                ),
+                center = Offset(center.x, center.y - radius * 0.75f),
+                radius = radius * 0.9f
+            ),
+            topLeft = Offset(
+                center.x - radius * 0.6f,
+                center.y - radius * 0.95f
+            ),
+            size = Size(
+                radius * 1.2f,
+                radius * 0.6f
+            )
+        )
+
+        // 💡 4. Kevyt top highlight (antaa “sun from above” feel)
+        drawCircle(
+            brush = Brush.radialGradient(
+                colors = listOf(
+                    Color.White.copy(alpha = 0.15f),
+                    Color.Transparent
+                ),
+                center = Offset(center.x, center.y - radius * 0.6f),
+                radius = radius * 0.8f
+            ),
+            radius = radius * 0.8f,
+            center = Offset(center.x, center.y - radius * 0.6f)
+        )
     }
 }

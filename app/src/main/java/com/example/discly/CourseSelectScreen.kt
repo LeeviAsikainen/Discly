@@ -275,7 +275,7 @@ fun CourseSelectScreen(
                             ),
 
                         colors = CardDefaults.cardColors(
-                            containerColor = colors.accent
+                            containerColor = colors.card
                         )
                     ) {
 

@@ -12,3 +12,4 @@ enum class ThemeMode {
     DARK_GOLD,
     DARK_ARCTIC
 }
+

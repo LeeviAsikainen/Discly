@@ -50,6 +50,8 @@ object AppStorage {
 
     private val THEME_KEY = stringPreferencesKey("theme")
 
+    private val DISC_KEY = stringPreferencesKey("selected_disc")
+
     fun getTheme(context: Context) =
         context.dataStore.data.map { prefs ->
             runCatching {
@@ -57,9 +59,23 @@ object AppStorage {
             }.getOrDefault(ThemeMode.DESERT)
         }
 
+
+    fun getSelectedDisc(context: Context) =
+        context.dataStore.data.map { prefs ->
+            runCatching {
+                DiscType.valueOf(prefs[DISC_KEY] ?: "")
+            }.getOrDefault(DiscType.SAKURA)
+        }
+
     suspend fun setTheme(context: Context, theme: ThemeMode) {
         context.dataStore.edit { prefs ->
             prefs[THEME_KEY] = theme.name
+        }
+    }
+
+    suspend fun setSelectedDisc(context: Context, disc: DiscType) {
+        context.dataStore.edit { prefs ->
+            prefs[DISC_KEY] = disc.name
         }
     }
 

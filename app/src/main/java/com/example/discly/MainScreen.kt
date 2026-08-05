@@ -53,6 +53,10 @@ fun MainScreen(
         mutableStateOf<SavedGame?>(null)
     }
 
+    val selectedDisc by AppStorage
+        .getSelectedDisc(context)
+        .collectAsState(initial = DiscType.SAKURA)
+
 
     LaunchedEffect(Unit) {
 
@@ -337,6 +341,8 @@ fun MainScreen(
 
                 colors = colors,
 
+                selectedDisc = selectedDisc,
+
                 startTime = unfinishedGame?.startTime
                     ?: System.currentTimeMillis(),
 
@@ -375,6 +381,9 @@ fun MainScreen(
 
                 onBack = {
                     currentScreen = AppScreen.CourseSelect
+                },
+                selectedDisc = selectedDisc,
+                onDiscSelected = { disc ->
                 }
             )
         }
