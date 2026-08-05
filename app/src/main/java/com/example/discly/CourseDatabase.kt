@@ -18,9 +18,9 @@ val CoursesDB = listOf(
             5, 3, 4,
             3, 4, 3
         ),
-    )
+    ),
 
-    /*
+/*
         // 🔹 Puijo
         Course(
             name = "Puijo DiscGolf",
@@ -100,5 +100,7 @@ val CoursesDB = listOf(
             )
         )
 
-     */
+
+ */
+
     )

@@ -1,6 +1,65 @@
 package com.example.discly
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
+import kotlin.math.pow
+
+fun Color.relativeLuminance(): Float {
+    fun channel(c: Float): Float {
+        return if (c <= 0.03928f) {
+            c / 12.92f
+        } else {
+            ((c + 0.055f) / 1.055f).pow(2.4f)
+        }
+    }
+
+    val r = channel(red)
+    val g = channel(green)
+    val b = channel(blue)
+
+    return 0.2126f * r + 0.7152f * g + 0.0722f * b
+}
+
+fun contrastRatio(c1: Color, c2: Color): Float {
+    val l1 = c1.relativeLuminance()
+    val l2 = c2.relativeLuminance()
+    val lighter = maxOf(l1, l2)
+    val darker = minOf(l1, l2)
+    return (lighter + 0.05f) / (darker + 0.05f)
+}
+
+fun contentColorFor(
+    background: Color,
+    accent: Color
+): Color {
+
+    val isLightBg = background.relativeLuminance() > 0.5f
+
+    // 🔹 kokeillaan useita sävyjä
+    val candidates = if (isLightBg) {
+        listOf(
+            lerp(accent, Color.Black, 0.7f),
+            lerp(accent, Color.Black, 0.85f),
+            lerp(accent, Color.Black, 0.95f)
+        )
+    } else {
+        listOf(
+            lerp(accent, Color.White, 0.6f),
+            lerp(accent, Color.White, 0.75f),
+            lerp(accent, Color.White, 0.9f)
+        )
+    }
+
+    // 🔹 valitaan ensimmäinen joka täyttää kontrastin
+    for (c in candidates) {
+        if (contrastRatio(c, background) >= 4.5f) {
+            return c
+        }
+    }
+
+    // 🔹 fallback (harvoin käytössä nyt)
+    return if (isLightBg) Color.Black else Color.White
+}
 
 val LightForestTheme = AppColors(
     background = Color(0xFFDAD7CD),  // #dad7cd
@@ -54,6 +113,7 @@ val DesertTheme = AppColors(
     subText = Color(0xFF8C6A4A),
 
     ball = Color.White
+
 )
 val DarkPinkTheme = AppColors(
     background = Color(0xFF121212),

@@ -11,5 +11,9 @@ data class AppColors(
     val text: Color,
     val subText: Color,
 
-    val ball: Color
+    val ball: Color//,
+
+    //val scoreInactive: Color,
+    //val scoreActive: Color,
+    //val scoreTextOnActive: Color
 )

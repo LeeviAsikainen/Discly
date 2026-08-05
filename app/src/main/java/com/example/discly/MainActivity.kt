@@ -1,15 +1,34 @@
 package com.example.discly
 
+import android.app.Activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowInsetsControllerCompat
 import kotlinx.coroutines.launch
 import com.example.discly.ui.theme.uDiscTheme
 
 
 class MainActivity : ComponentActivity() {
+
+    @Composable
+    fun SetSystemBarsColor(color: Color) {
+        val view = LocalView.current
+
+        if (!view.isInEditMode) {
+            SideEffect {
+                val window = (view.context as Activity).window
+                window.navigationBarColor = color.toArgb()
+            }
+        }
+    }
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +57,9 @@ class MainActivity : ComponentActivity() {
 
             uDiscTheme {
 
+                SetSystemBarsColor(colors.background)
+
+
                 MainScreen(
                     themeMode = themeMode,
                     onThemeSelected = { newTheme ->
@@ -56,5 +78,6 @@ class MainActivity : ComponentActivity() {
 
             }
         }
+
     }
 }

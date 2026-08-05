@@ -327,7 +327,8 @@ fun MainScreen(
                 totalHoles = totalHoles,
                 courseName = courseName,
 
-                pars = selectedCourse?.pars
+                pars = unfinishedGame?.pars
+                    ?: selectedCourse?.pars
                     ?: List(totalHoles){3},
 
                 savedScores = unfinishedGame?.scores,

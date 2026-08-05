@@ -29,6 +29,7 @@ import kotlin.math.roundToInt
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalContext
@@ -72,7 +73,7 @@ fun GameScreen(
     val context = LocalContext.current
 
 
-    val scores = listOf(5, 4, 3, 2, 1, 0) // -1 = "Muu"
+    val scores = listOf(6, 5, 4, 3, 2, 0) // -1 = "Muu"
 
     //muulle
     var customScoreText by remember { mutableStateOf("") }
@@ -466,6 +467,8 @@ fun GameScreen(
             }
         }
 
+
+
         // --- SCORE LIST ---
         AnimatedVisibility(isSelecting, enter = fadeIn(), exit = fadeOut()) {
             Column(
@@ -473,6 +476,23 @@ fun GameScreen(
                 verticalArrangement = Arrangement.Bottom
             ) {
                 scores.forEach { score ->
+
+                    // --- par-laskenta score-listaan ---
+
+                    val par = pars[currentHoleIndex]
+                    val diff = score - par
+
+                    val parText = when {
+                        diff == 0 -> "PAR"
+                        diff > 0 -> "+$diff"
+                        else -> "$diff"
+                    }
+
+                    val parColor = when {
+                        diff > 0 -> Color(0xFFFF5252) // 🔴 bogey
+                        diff < 0 -> Color(0xFF4CAF50) // 🟢 birdie
+                        else -> colors.text           // par
+                    }
 
                     if (score == 0) {
 
@@ -484,7 +504,7 @@ fun GameScreen(
                                 .background(colors.card)
                         ) {
                             Text(
-                                "Muu",
+                                "Other",
                                 color = colors.text,
                                 modifier = Modifier.padding(24.dp)
                             )
@@ -494,20 +514,38 @@ fun GameScreen(
 
                         val isActive = score == currentScore
 
+                        val bgColor = Color(0xFF1E1E1E)
+
+                        val textColor =
+                            if (isActive) contentColorFor(bgColor, colors.accent)
+                            else contentColorFor(bgColor, colors.accent)//colors.text
+
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .weight(getWeight(score))
                                 .background(
                                     if (isActive) colors.accent
-                                    else Color(0xFF1E1E1E)
+                                    else colors.background
                                 )
                         ) {
-                            Text(
-                                "$score",
-                                color = colors.text,
-                                modifier = Modifier.padding(24.dp)
-                            )
+                            Column(
+                                modifier = Modifier.padding(24.dp),
+                                horizontalAlignment = Alignment.Start
+                            ) {
+
+                                Text(
+                                    text = "$score",
+                                    color = textColor,
+                                    fontSize = 28.sp
+                                )
+
+                                Text(
+                                    text = parText,
+                                    color = parColor,
+                                    fontSize = 14.sp
+                                )
+                            }
                         }
                     }
                 }
@@ -590,11 +628,21 @@ fun GameScreen(
                 },
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = scoreTable[currentPlayerIndex][currentHoleIndex].toString(),
-                color = Color.Black,
-                fontSize = 42.sp
-            )
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = scoreTable[currentPlayerIndex][currentHoleIndex].toString(),
+                    color = colors.accent,
+                    fontSize = 42.sp
+                )
+                Text(
+                    text = "THROWS",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = colors.subText
+                )
+            }
         }
 
         Box(
@@ -800,12 +848,13 @@ fun GameScreen(
 fun getWeight(score: Int): Float {
     return when (score) {
 
-        5 -> 2f
+        6 -> 1.7f
+        5 -> 1.9f
         4 -> 2.25f
         3 -> 2.5f
-        2 -> 1.5f
+        2 -> 1.6f
         1 -> 1f
-        0 -> 1.5f
+        0 -> 1.8f
 
         else -> 1.2f
     }
@@ -816,7 +865,7 @@ fun calculateScoreFromY(
     totalHeight: Float
 ): Int {
 
-    val scores = listOf(5, 4, 3, 2, 1)
+    val scores = listOf(6, 5, 4, 3, 2)
 
     val totalWeight = scores.sumOf {
         getWeight(it).toDouble()
